@@ -109,19 +109,20 @@ def upload():
 
         results = validate_label(text)
 
+    
         # -------- AI Analysis -------- #
 
-        ai_report = analyze_label(text)
+ai_report = analyze_label(text)
 
-        score = 0
+# -------- Calculate Compliance Score -------- #
 
-        match = re.search(
-            r"Compliance Score[:\s]*(\d+)",
-            ai_report
-        )
+passed = sum(results.values())
+total = len(results)
 
-        if match:
-            score = int(match.group(1))
+if total > 0:
+    score = round((passed / total) * 100)
+else:
+    score = 0
 
         # -------- Save History -------- #
 

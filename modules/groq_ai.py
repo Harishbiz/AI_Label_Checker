@@ -17,18 +17,11 @@ def analyze_label(text):
     prompt = f"""
 You are a Senior CDSCO Regulatory Affairs Officer.
 
-Analyze the pharmaceutical label below according to CDSCO Rule 96.
+Analyze the following pharmaceutical label according to CDSCO Rule 96.
 
-Scoring Rules:
-- Start with a score of 100.
-- Deduct 10 marks for every missing mandatory field.
-- Deduct 5 marks for every important regulatory deficiency.
-- Do NOT return a fixed score.
-- Calculate the score only from the uploaded label.
+Do NOT calculate or mention any compliance score.
 
-Return ONLY in this format:
-
-Compliance Score: <number>
+Return ONLY in the following format:
 
 Mandatory Fields Present:
 - ...
@@ -46,6 +39,7 @@ Final Compliance Summary:
 ...
 
 Label:
+
 {text}
 """
 
