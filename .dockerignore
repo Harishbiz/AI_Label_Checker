@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+*.pyc
+uploads/
+label_history.db
+.env
+.git
+.gitignore
