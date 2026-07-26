@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AI Pharmaceutical Label Compliance Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>💊 AI Pharmaceutical Label Compliance Checker</h1>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+
+        <label><b>Select Pharmaceutical Label</b></label>
+
+        <br><br>
+
+        <input type="file" name="label" required>
+
+        <br><br>
+
+        <label><b>Select AI Model</b></label>
+
+        <br><br>
+
+        <select name="ai">
+            <option value="groq">Groq AI (Llama 3.3)</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            🔍 Analyze Label
+        </button>
+
+    </form>
+
+    <hr style="margin:30px 0;">
+
+    <div style="text-align:center;">
+
+        <a href="/history">
+
+            <button type="button">
+                📚 View Analysis History
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

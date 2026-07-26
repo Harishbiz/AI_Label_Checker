@@ -1,0 +1,36 @@
+{
+  "mandatory_fields": [
+    {
+      "name": "Brand Name",
+      "keywords": ["brand"]
+    },
+    {
+      "name": "Generic Name",
+      "keywords": ["tablet", "capsule", "injection", "syrup", "cream", "ointment"]
+    },
+    {
+      "name": "Batch Number",
+      "keywords": ["batch", "batch no", "batch number"]
+    },
+    {
+      "name": "Manufacturing Date",
+      "keywords": ["mfg", "manufacturing date", "mfd"]
+    },
+    {
+      "name": "Expiry Date",
+      "keywords": ["exp", "expiry", "use before"]
+    },
+    {
+      "name": "Manufacturer",
+      "keywords": ["manufactured by", "marketed by"]
+    },
+    {
+      "name": "Manufacturing Licence Number",
+      "keywords": ["lic no", "licence no", "license no"]
+    },
+    {
+      "name": "Storage Condition",
+      "keywords": ["store", "storage", "protect from"]
+    }
+  ]
+}

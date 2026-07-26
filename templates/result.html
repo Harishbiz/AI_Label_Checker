@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Pharmaceutical Label Compliance Checker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>💊 AI Pharmaceutical Label Compliance Checker</h1>
+
+    <!-- Dashboard -->
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:30px;">
+
+        <div class="card" style="text-align:center;">
+            <h3>📊 Compliance Score</h3>
+            <h1>{{ score }}%</h1>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <h3>✅ Rules Passed</h3>
+            <h1>{{ results.values()|select|list|length }}</h1>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <h3>❌ Missing Rules</h3>
+            <h1>{{ results.values()|reject|list|length }}</h1>
+        </div>
+
+        <div class="card" style="text-align:center;">
+
+            <h3>🤖 AI Status</h3>
+
+            {% if score >= 90 %}
+
+                <h2 style="color:green;">Excellent</h2>
+
+            {% elif score >= 70 %}
+
+                <h2 style="color:orange;">Moderate</h2>
+
+            {% else %}
+
+                <h2 style="color:red;">Poor</h2>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- Compliance Score -->
+
+    <div class="score-card">
+
+        <h2>Compliance Score</h2>
+
+        <div class="score">{{ score }}%</div>
+
+        <div class="progress">
+
+            <div class="progress-bar" style="width: {{ score }}%;"></div>
+
+        </div>
+
+    </div>
+
+    <!-- Uploaded File -->
+
+    <div class="card">
+
+        <h2>📄 Uploaded File</h2>
+
+        <p><strong>{{ filename }}</strong></p>
+
+    </div>
+
+    <!-- Compliance Chart -->
+
+    <div class="card">
+
+        <h2>📊 Compliance Overview</h2>
+
+        <div class="chart-box">
+
+            <canvas id="complianceChart"></canvas>
+
+        </div>
+
+    </div>
+        <!-- Rule Validation -->
+
+    <div class="card">
+
+        <h2>📋 CDSCO Rule Validation</h2>
+
+        <table>
+
+            <tr>
+                <th>Requirement</th>
+                <th>Status</th>
+            </tr>
+
+            {% for item, status in results.items() %}
+
+            <tr>
+
+                <td>{{ item }}</td>
+
+                <td>
+
+                    {% if status %}
+                        ✅ Present
+                    {% else %}
+                        ❌ Missing
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    <!-- Uploaded Label -->
+
+    <div class="card">
+
+        <h2>🖼 Uploaded Label</h2>
+
+        <center>
+
+            <img
+                src="{{ image_path }}"
+                alt="Uploaded Label"
+                style="
+                    width:100%;
+                    max-width:500px;
+                    border-radius:12px;
+                    border:2px solid #ddd;
+                ">
+
+        </center>
+
+    </div>
+
+    <!-- OCR -->
+
+    <div class="card">
+
+        <h2>📄 OCR Extracted Text</h2>
+
+        <pre>{{ text }}</pre>
+
+    </div>
+        <!-- AI Analysis -->
+
+    <div class="card">
+
+        <h2>🤖 AI Regulatory Analysis</h2>
+
+        <div class="ai-report" id="aiReport">
+            <pre>{{ ai_report }}</pre>
+        </div>
+
+        <br>
+
+        <button type="button" onclick="copyAIReport()">
+            📋 Copy AI Suggestions
+        </button>
+
+    </div>
+
+    <!-- Download PDF -->
+
+    <div class="card">
+
+        <h2>📥 Export Report</h2>
+
+        <form action="/download_pdf" method="POST">
+
+            <input type="hidden" name="filename" value="{{ filename }}">
+            <input type="hidden" name="score" value="{{ score }}">
+            <input type="hidden" name="text" value="{{ text }}">
+            <input type="hidden" name="ai_report" value="{{ ai_report }}">
+
+            {% for item, status in results.items() %}
+                <input
+                    type="hidden"
+                    name="rule_{{ item }}"
+                    value="{{ status }}">
+            {% endfor %}
+
+            <button type="submit">
+                ⬇ Download Compliance Report (PDF)
+            </button>
+
+        </form>
+
+    </div>
+
+    <br>
+
+    <center>
+
+        <a href="/">
+            <button>
+                ⬅ Upload Another Label
+            </button>
+        </a>
+
+    </center>
+
+</div>
+
+<script>
+
+function copyAIReport(){
+
+    const report = document.getElementById("aiReport").innerText;
+
+    navigator.clipboard.writeText(report);
+
+    alert("AI report copied successfully!");
+
+}
+
+const passed = {{ results.values()|select|list|length }};
+const failed = {{ results.values()|reject|list|length }};
+
+new Chart(document.getElementById("complianceChart"), {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: ["Passed","Missing"],
+
+        datasets: [{
+
+            data: [passed, failed],
+
+            backgroundColor: [
+                "#22c55e",
+                "#ef4444"
+            ],
+
+            borderWidth: 2
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+
+                position: "bottom"
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

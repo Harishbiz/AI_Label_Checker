@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Analysis History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📚 Analysis History</h1>
+
+    <form method="GET" action="/history" style="margin-bottom:20px;">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by filename..."
+            value="{{ keyword }}"
+            style="padding:10px; width:300px; border-radius:6px;">
+
+        <button type="submit">
+            🔍 Search
+        </button>
+
+        <a href="/history">
+            <button type="button">
+                Reset
+            </button>
+        </a>
+
+    </form>
+
+    <table class="history-table">
+
+        <tr>
+            <th>Filename</th>
+            <th>Score</th>
+            <th>Date & Time</th>
+        </tr>
+
+        {% for row in history %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}%</td>
+            <td>{{ row[2] }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <div style="text-align:center;">
+        <a href="/">
+            <button type="button">
+                ⬅ Back to Dashboard
+            </button>
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

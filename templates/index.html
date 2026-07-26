@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AI Pharmaceutical Label Compliance Checker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>💊 AI Pharmaceutical Label Compliance Checker</h1>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+
+        <div class="stat-card">
+            <h3>Total Labels</h3>
+            <h1>{{ stats.total }}</h1>
+        </div>
+
+        <div class="stat-card">
+            <h3>Average Score</h3>
+            <h1>{{ stats.average }}%</h1>
+        </div>
+
+        <div class="stat-card">
+            <h3>Highest Score</h3>
+            <h1>{{ stats.highest }}%</h1>
+        </div>
+
+        <div class="stat-card">
+            <h3>Lowest Score</h3>
+            <h1>{{ stats.lowest }}%</h1>
+        </div>
+
+    </div>
+
+    <!-- Analytics Chart -->
+
+    <div class="chart-card">
+
+        <h2>📊 Compliance Analytics</h2>
+
+        <canvas id="scoreChart"></canvas>
+
+    </div>
+
+    <br>
+
+    <!-- Upload Form -->
+
+    <form action="/upload"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <label><b>Select Pharmaceutical Label</b></label>
+
+        <br><br>
+
+        <input
+            type="file"
+            name="label"
+            required>
+
+        <br><br>
+
+        <label><b>Select AI Model</b></label>
+
+        <br><br>
+
+        <select name="ai">
+
+            <option value="groq">
+                Groq AI (Llama 3.3)
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+
+            🔍 Analyze Label
+
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h2>📄 Recent Analysis</h2>
+
+    <table class="history-table">
+
+        <tr>
+
+            <th>Filename</th>
+            <th>Score</th>
+            <th>Date</th>
+
+        </tr>
+
+        {% for row in history %}
+
+        <tr>
+
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}%</td>
+            <td>{{ row[3] }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <div style="text-align:center;">
+
+        <a href="/history">
+
+            <button>
+
+                📚 View Full History
+
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById("scoreChart");
+
+new Chart(ctx,{
+
+    type:"doughnut",
+
+    data:{
+
+        labels:[
+            "Excellent",
+            "Good",
+            "Average",
+            "Poor"
+        ],
+
+        datasets:[{
+
+            data:[
+                {{ chart.excellent }},
+                {{ chart.good }},
+                {{ chart.average }},
+                {{ chart.poor }}
+            ]
+
+        }]
+
+    },
+
+    options:{
+
+        responsive:true,
+
+        plugins:{
+
+            legend:{
+                position:"bottom"
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
