@@ -1,19 +1,19 @@
 import os
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from groq import Groq
 
-# Read .env
-config = dotenv_values(".env")
+# Load environment variables (.env locally, Render environment in production)
+load_dotenv()
 
-API_KEY = config["GROQ_API_KEY"]
+API_KEY = os.getenv("GROQ_API_KEY")
 
-print("Loaded Groq Key:", API_KEY[:12] + "...")
+if not API_KEY:
+    raise ValueError("GROQ_API_KEY environment variable is not set.")
 
 client = Groq(api_key=API_KEY)
 
 
 def analyze_label(text):
-
     prompt = f"""
 You are a Senior CDSCO Regulatory Affairs Officer.
 
@@ -39,7 +39,6 @@ Label:
 """
 
     try:
-
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
