@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from groq import Groq
 
-# Load environment variables (.env locally, Render environment in production)
 load_dotenv()
 
 API_KEY = os.getenv("GROQ_API_KEY")
@@ -14,27 +13,39 @@ client = Groq(api_key=API_KEY)
 
 
 def analyze_label(text):
+
     prompt = f"""
 You are a Senior CDSCO Regulatory Affairs Officer.
 
-Analyze the following pharmaceutical label.
+Analyze the pharmaceutical label below according to CDSCO Rule 96.
 
-Return the response in this format:
+Scoring Rules:
+- Start with a score of 100.
+- Deduct 10 marks for every missing mandatory field.
+- Deduct 5 marks for every important regulatory deficiency.
+- Do NOT return a fixed score.
+- Calculate the score only from the uploaded label.
 
-Compliance Score: XX
+Return ONLY in this format:
 
-Mandatory Fields Present
+Compliance Score: <number>
 
-Missing Mandatory Fields
+Mandatory Fields Present:
+- ...
 
-Regulatory Observations
+Missing Mandatory Fields:
+- ...
 
-AI Compliance Suggestions
+Regulatory Observations:
+- ...
 
-Final Compliance Summary
+AI Compliance Suggestions:
+- ...
+
+Final Compliance Summary:
+...
 
 Label:
-
 {text}
 """
 
