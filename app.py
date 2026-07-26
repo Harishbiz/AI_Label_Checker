@@ -89,55 +89,66 @@ def upload():
 
     try:
 
-        # -------- Handle PDF or Image -------- #
+    # -------- Handle PDF or Image -------- #
 
-        if filename.lower().endswith(".pdf"):
+    if filename.lower().endswith(".pdf"):
 
-            ocr_image = pdf_to_image(filepath)
-            image_path = "/" + ocr_image.replace("\\", "/")
+        ocr_image = pdf_to_image(filepath)
+        image_path = "/" + ocr_image.replace("\\", "/")
 
-        else:
+    else:
 
-            ocr_image = filepath
-            image_path = "/" + filepath.replace("\\", "/")
+        ocr_image = filepath
+        image_path = "/" + filepath.replace("\\", "/")
 
-        # -------- OCR -------- #
+    # -------- OCR -------- #
 
-        text = extract_text(ocr_image)
+    text = extract_text(ocr_image)
 
-        # -------- Rule Validation -------- #
+    # -------- Rule Validation -------- #
 
-        results = validate_label(text)
+    results = validate_label(text)
 
-    
-        # -------- AI Analysis -------- #
+    # -------- AI Analysis -------- #
 
-ai_report = analyze_label(text)
+    ai_report = analyze_label(text)
 
-# -------- Calculate Compliance Score -------- #
+    # -------- Calculate Compliance Score -------- #
 
-passed = sum(results.values())
-total = len(results)
+    passed = sum(results.values())
+    total = len(results)
 
-if total > 0:
-    score = round((passed / total) * 100)
-else:
-    score = 0
+    if total > 0:
+        score = round((passed / total) * 100)
+    else:
+        score = 0
 
-        # -------- Save History -------- #
+    # -------- Save History -------- #
 
-        current_date = datetime.now().strftime("%d-%m-%Y %H:%M")
+    current_date = datetime.now().strftime("%d-%m-%Y %H:%M")
 
-        save_result(
-            filename,
-            score,
-            current_date
-        )
+    save_result(
+        filename,
+        score,
+        current_date
+    )
 
-        return render_template(
-            "result.html",
-            filename=filename,
-            image_path=image_path,
+    return render_template(
+        "result.html",
+        filename=filename,
+        image_path=image_path,
+        text=text,
+        results=results,
+        ai_report=ai_report,
+        score=score
+    )
+
+except Exception as e:
+
+    return f"""
+    <h2>Application Error</h2>
+    <pre>{str(e)}</pre>
+    """, 500
             text=text,
             results=results,
             ai_report=ai_report,
