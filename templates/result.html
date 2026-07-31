@@ -1,127 +1,424 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-    <title>AI Pharmaceutical Label Compliance Checker</title>
+    <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Compliance Report | LabelAudit AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="page fade">
 
-    <h1>💊 AI Pharmaceutical Label Compliance Checker</h1>
+<!-- ================= NAVBAR ================= -->
 
-    <!-- Dashboard -->
+<nav class="navbar">
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:30px;">
+    <div class="logo">
 
-        <div class="card" style="text-align:center;">
-            <h3>📊 Compliance Score</h3>
-            <h1>{{ score }}%</h1>
+        <div class="logo-circle">
+
+            <i class="fa-solid fa-flask"></i>
+
         </div>
 
-        <div class="card" style="text-align:center;">
-            <h3>✅ Rules Passed</h3>
-            <h1>{{ results.values()|select|list|length }}</h1>
-        </div>
+        <div>
 
-        <div class="card" style="text-align:center;">
-            <h3>❌ Missing Rules</h3>
-            <h1>{{ results.values()|reject|list|length }}</h1>
-        </div>
+            <h2>LabelAudit AI</h2>
 
-        <div class="card" style="text-align:center;">
+            <small>
 
-            <h3>🤖 AI Status</h3>
+                AI Pharmaceutical Label Compliance Platform
 
-            {% if score >= 90 %}
-
-                <h2 style="color:green;">Excellent</h2>
-
-            {% elif score >= 70 %}
-
-                <h2 style="color:orange;">Moderate</h2>
-
-            {% else %}
-
-                <h2 style="color:red;">Poor</h2>
-
-            {% endif %}
+            </small>
 
         </div>
 
     </div>
 
-    <!-- Compliance Score -->
+    <div class="nav-right">
 
-    <div class="score-card">
+        <a href="/">
 
-        <h2>Compliance Score</h2>
+            Dashboard
 
-        <div class="score">{{ score }}%</div>
+        </a>
 
-        <div class="progress">
+        <a href="/history">
 
-            <div class="progress-bar" style="width: {{ score }}%;"></div>
+            History
+
+        </a>
+
+    </div>
+
+</nav>
+
+<!-- ================= PAGE TITLE ================= -->
+
+<section class="hero">
+
+    <h1>
+
+        Pharmaceutical Label Compliance Report
+
+    </h1>
+
+    <p>
+
+        AI-assisted evaluation based on OCR extraction,
+        Rule 96 validation and Large Language Model analysis.
+
+    </p>
+
+</section>
+
+<!-- ================= REPORT HEADER ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-file-medical"></i>
+
+                Compliance Assessment
+
+            </h2>
+
+            <p class="text-muted">
+
+                Automatically generated compliance report
+
+            </p>
+
+        </div>
+
+        <span class="badge">
+
+            {{ filename }}
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- ================= SCORE CARD ================= -->
+
+<div class="score-card">
+
+    <div class="score-circle
+
+    {% if score>=90 %}
+
+        excellent-circle
+
+    {% elif score>=75 %}
+
+        good-circle
+
+    {% elif score>=50 %}
+
+        average-circle
+
+    {% else %}
+
+        poor-circle
+
+    {% endif %}
+
+    ">
+
+        <h1>
+
+            {{ score }}%
+
+        </h1>
+
+        <p>
+
+            Compliance Score
+
+        </p>
+
+    </div>
+
+    <div class="score-info">
+
+        <div class="card">
+
+            <h3>
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                Mandatory Fields
+
+            </h3>
+
+            <h1>
+
+                {{ passed }}/{{ total }}
+
+            </h1>
+
+            <p class="text-muted">
+
+                Successfully validated
+
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+                Report Generated
+
+            </h3>
+
+            <h4>
+
+                {{ moment }}
+
+            </h4>
+
+            <p class="text-muted">
+
+                Local System Time
+
+            </p>
 
         </div>
 
     </div>
 
-    <!-- Uploaded File -->
+</div>
 
-    <div class="card">
+<!-- ================= REPORT INFORMATION ================= -->
 
-        <h2>📄 Uploaded File</h2>
+<div class="metadata-grid">
 
-        <p><strong>{{ filename }}</strong></p>
+    <div>
+
+        <strong>
+
+            Report ID
+
+        </strong>
+
+        <br><br>
+
+        LAB-{{ range(1000,9999)|random }}
 
     </div>
 
-    <!-- Compliance Chart -->
+    <div>
 
-    <div class="card">
+        <strong>
 
-        <h2>📊 Compliance Overview</h2>
+            AI Engine
 
-        <div class="chart-box">
+        </strong>
 
-            <canvas id="complianceChart"></canvas>
+        <br><br>
+
+        Groq Llama 3.3 70B
+
+    </div>
+
+    <div>
+
+        <strong>
+
+            OCR Engine
+
+        </strong>
+
+        <br><br>
+
+        Tesseract OCR
+
+    </div>
+
+    <div>
+
+        <strong>
+
+            Validation Standard
+
+        </strong>
+
+        <br><br>
+
+        Drugs & Cosmetics Rules
+
+        <br>
+
+        Rule 96
+    </div>
+
+</div>
+<!-- ================= UPLOADED LABEL ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-image"></i>
+
+            Uploaded Pharmaceutical Label
+
+        </h2>
+
+        <span class="badge">
+
+            Original File
+
+        </span>
+
+    </div>
+
+    <img
+        src="{{ image_path }}"
+        class="label-preview"
+        alt="Uploaded Label">
+
+</div>
+
+<!-- ================= RULE 96 CHECKLIST ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-list-check"></i>
+
+                Rule 96 Compliance Checklist
+
+            </h2>
+
+            <p class="text-muted">
+
+                Validation against mandatory pharmaceutical label requirements
+
+            </p>
 
         </div>
 
+        <span class="badge">
+
+            {{ passed }}/{{ total }} Passed
+
+        </span>
+
     </div>
-        <!-- Rule Validation -->
 
-    <div class="card">
+    <table class="modern-table">
 
-        <h2>📋 CDSCO Rule Validation</h2>
-
-        <table>
+        <thead>
 
             <tr>
-                <th>Requirement</th>
-                <th>Status</th>
+
+                <th width="60">
+
+                    #
+
+                </th>
+
+                <th>
+
+                    Mandatory Requirement
+
+                </th>
+
+                <th width="180">
+
+                    Validation Status
+
+                </th>
+
             </tr>
 
-            {% for item, status in results.items() %}
+        </thead>
+
+        <tbody>
+
+            {% for field,value in results.items() %}
 
             <tr>
-
-                <td>{{ item }}</td>
 
                 <td>
 
-                    {% if status %}
-                        ✅ Present
+                    {{ loop.index }}
+
+                </td>
+
+                <td>
+
+                    <strong>
+
+                        {{ field }}
+
+                    </strong>
+
+                </td>
+
+                <td>
+
+                    {% if value %}
+
+                    <span class="status excellent">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Present
+
+                    </span>
+
                     {% else %}
-                        ❌ Missing
+
+                    <span class="status poor">
+
+                        <i class="fa-solid fa-circle-xmark"></i>
+
+                        Missing
+
+                    </span>
+
                     {% endif %}
 
                 </td>
@@ -130,160 +427,752 @@
 
             {% endfor %}
 
-        </table>
+        </tbody>
 
-    </div>
-
-    <!-- Uploaded Label -->
-
-    <div class="card">
-
-        <h2>🖼 Uploaded Label</h2>
-
-        <center>
-
-            <img
-                src="{{ image_path }}"
-                alt="Uploaded Label"
-                style="
-                    width:100%;
-                    max-width:500px;
-                    border-radius:12px;
-                    border:2px solid #ddd;
-                ">
-
-        </center>
-
-    </div>
-
-    <!-- OCR -->
-
-    <div class="card">
-
-        <h2>📄 OCR Extracted Text</h2>
-
-        <pre>{{ text }}</pre>
-
-    </div>
-        <!-- AI Analysis -->
-
-    <div class="card">
-
-        <h2>🤖 AI Regulatory Analysis</h2>
-
-        <div class="ai-report" id="aiReport">
-            <pre>{{ ai_report }}</pre>
-        </div>
-
-        <br>
-
-        <button type="button" onclick="copyAIReport()">
-            📋 Copy AI Suggestions
-        </button>
-
-    </div>
-
-    <!-- Download PDF -->
-
-    <div class="card">
-
-        <h2>📥 Export Report</h2>
-
-        <form action="/download_pdf" method="POST">
-
-            <input type="hidden" name="filename" value="{{ filename }}">
-            <input type="hidden" name="score" value="{{ score }}">
-            <input type="hidden" name="text" value="{{ text }}">
-            <input type="hidden" name="ai_report" value="{{ ai_report }}">
-
-            {% for item, status in results.items() %}
-                <input
-                    type="hidden"
-                    name="rule_{{ item }}"
-                    value="{{ status }}">
-            {% endfor %}
-
-            <button type="submit">
-                ⬇ Download Compliance Report (PDF)
-            </button>
-
-        </form>
-
-    </div>
-
-    <br>
-
-    <center>
-
-        <a href="/">
-            <button>
-                ⬅ Upload Another Label
-            </button>
-        </a>
-
-    </center>
+    </table>
 
 </div>
 
-<script>
+<!-- ================= COMPLIANCE OVERVIEW ================= -->
 
-function copyAIReport(){
+<div class="summary-grid">
 
-    const report = document.getElementById("aiReport").innerText;
+    <div class="card">
 
-    navigator.clipboard.writeText(report);
+        <div class="icon">
 
-    alert("AI report copied successfully!");
+            <i class="fa-solid fa-circle-check"></i>
 
-}
+        </div>
 
-const passed = {{ results.values()|select|list|length }};
-const failed = {{ results.values()|reject|list|length }};
+        <h3>
 
-new Chart(document.getElementById("complianceChart"), {
+            Fields Present
 
-    type: "doughnut",
+        </h3>
 
-    data: {
+        <h1>
 
-        labels: ["Passed","Missing"],
+            {{ passed }}
 
-        datasets: [{
+        </h1>
 
-            data: [passed, failed],
+    </div>
 
-            backgroundColor: [
-                "#22c55e",
-                "#ef4444"
-            ],
+    <div class="card">
 
-            borderWidth: 2
+        <div class="icon">
 
-        }]
+            <i class="fa-solid fa-circle-xmark"></i>
 
-    },
+        </div>
 
-    options: {
+        <h3>
 
-        responsive: true,
+            Missing Fields
 
-        maintainAspectRatio: false,
+        </h3>
 
-        plugins: {
+        <h1>
 
-            legend: {
+            {{ total-passed }}
 
-                position: "bottom"
+        </h1>
 
-            }
+    </div>
 
-        }
+    <div class="card">
 
-    }
+        <div class="icon">
 
-});
+            <i class="fa-solid fa-chart-column"></i>
 
-</script>
+        </div>
 
-</body>
-</html>
+        <h3>
+
+            Compliance
+
+        </h3>
+
+        <h1>
+
+            {{ score }}%
+
+        </h1>
+
+    </div>
+
+</div>
+
+<!-- ================= COMPLIANCE VERDICT ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-scale-balanced"></i>
+
+            Overall Regulatory Verdict
+
+        </h2>
+
+    </div>
+
+    {% if score >= 90 %}
+
+    <div class="status excellent" style="padding:18px;font-size:16px;">
+
+        <i class="fa-solid fa-award"></i>
+
+        Excellent compliance. The uploaded pharmaceutical label satisfies almost all mandatory Rule 96 requirements and requires minimal correction.
+
+    </div>
+
+    {% elif score >=75 %}
+
+    <div class="status good" style="padding:18px;font-size:16px;">
+
+        <i class="fa-solid fa-thumbs-up"></i>
+
+        Good compliance. Minor deficiencies were detected which should be corrected before submission.
+
+    </div>
+
+    {% elif score >=50 %}
+
+    <div class="status average" style="padding:18px;font-size:16px;">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        Moderate compliance. Several mandatory requirements are missing and regulatory revision is recommended.
+
+    </div>
+
+    {% else %}
+
+    <div class="status poor" style="padding:18px;font-size:16px;">
+
+        <i class="fa-solid fa-circle-exclamation"></i>
+
+        Poor compliance. Significant Rule 96 deficiencies were detected. Corrective action is required before approval.
+
+    </div>
+
+    {% endif %}
+
+</div>
+<!-- ================= OCR EXTRACTED TEXT ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                OCR Extracted Text
+
+            </h2>
+
+            <p class="text-muted">
+
+                Raw text extracted using Tesseract OCR
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <details open>
+
+        <summary>
+
+            View Extracted Text
+
+        </summary>
+
+        <pre class="ocr-box">
+
+{{ text }}
+
+        </pre>
+
+    </details>
+
+</div>
+
+<!-- ================= AI REPORT ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-robot"></i>
+
+                AI Regulatory Assessment
+
+            </h2>
+
+            <p class="text-muted">
+
+                Generated using Groq Llama 3.3 Large Language Model
+
+            </p>
+
+        </div>
+
+        <span class="badge">
+
+            AI Generated
+
+        </span>
+
+    </div>
+
+    <pre class="ai-report">
+
+{{ ai_report }}
+
+    </pre>
+
+</div>
+
+<!-- ================= PROCESS OVERVIEW ================= -->
+
+<div class="analytics-grid">
+
+    <div class="card">
+
+        <div class="icon">
+
+            <i class="fa-solid fa-camera"></i>
+
+        </div>
+
+        <h3>
+
+            Step 1
+
+        </h3>
+
+        <p>
+
+            Pharmaceutical label uploaded and processed.
+
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <div class="icon">
+
+            <i class="fa-solid fa-eye"></i>
+
+        </div>
+
+        <h3>
+
+            Step 2
+
+        </h3>
+
+        <p>
+
+            OCR extracted textual information from the label.
+
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <div class="icon">
+
+            <i class="fa-solid fa-list-check"></i>
+
+        </div>
+
+        <h3>
+
+            Step 3
+
+        </h3>
+
+        <p>
+
+            Rule 96 mandatory requirements validated automatically.
+
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <div class="icon">
+
+            <i class="fa-solid fa-brain"></i>
+
+        </div>
+
+        <h3>
+
+            Step 4
+
+        </h3>
+
+        <p>
+
+            AI generated observations, suggestions and regulatory summary.
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ================= TECHNOLOGY STACK ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-microchip"></i>
+
+            Analysis Pipeline
+
+        </h2>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-image"></i>
+
+            </div>
+
+            <h3>
+
+                Image Processing
+
+            </h3>
+
+            <p>
+
+                PNG / JPG / PDF
+
+            </p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-font"></i>
+
+            </div>
+
+            <h3>
+
+                OCR Engine
+
+            </h3>
+
+            <p>
+
+                Tesseract OCR
+
+            </p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-scale-balanced"></i>
+
+            </div>
+
+            <h3>
+
+                Rule Validation
+
+            </h3>
+
+            <p>
+
+                CDSCO Rule 96
+
+            </p>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-robot"></i>
+
+            </div>
+
+            <h3>
+
+                AI Model
+
+            </h3>
+
+            <p>
+
+                Groq Llama 3.3 70B
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= DISCLAIMER ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            Disclaimer
+
+        </h2>
+
+    </div>
+
+    <p class="text-muted" style="line-height:1.8;">
+
+        This compliance report is generated automatically using Optical Character
+        Recognition (OCR), deterministic Rule 96 validation and an AI language
+        model. The report is intended to assist regulatory professionals during
+        pharmaceutical label review and should not replace official regulatory
+        evaluation by the appropriate authority.
+
+    </p>
+
+</div>
+<!-- ================= OCR EXTRACTED TEXT ================= -->
+
+<div class="card fade">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                OCR Extracted Text
+
+            </h2>
+
+            <p class="text-muted">
+
+                Text extracted from the uploaded pharmaceutical label using Tesseract OCR.
+
+            </p>
+
+        </div>
+
+        <span class="badge">
+
+            OCR Output
+
+        </span>
+
+    </div>
+
+    <details open>
+
+        <summary>
+
+            View Extracted Text
+
+        </summary>
+
+        <pre class="ocr-box">{{ text }}</pre>
+
+    </details>
+
+</div>
+
+<!-- ================= AI ANALYSIS ================= -->
+
+<div class="card fade">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-robot"></i>
+
+                AI Regulatory Analysis
+
+            </h2>
+
+            <p class="text-muted">
+
+                Generated using Groq Llama 3.3 (70B Versatile)
+
+            </p>
+
+        </div>
+
+        <span class="badge">
+
+            AI Generated
+
+        </span>
+
+    </div>
+
+    <pre class="ai-report">{{ ai_report }}</pre>
+
+</div>
+
+<!-- ================= ANALYSIS PIPELINE ================= -->
+
+<div class="card fade">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-gears"></i>
+
+            Analysis Workflow
+
+        </h2>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-upload"></i>
+
+            </div>
+
+            <div>
+
+                <span>Step 1</span>
+
+                <h2>Upload</h2>
+
+                <small>Image / PDF Received</small>
+
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-eye"></i>
+
+            </div>
+
+            <div>
+
+                <span>Step 2</span>
+
+                <h2>OCR</h2>
+
+                <small>Text Extraction</small>
+
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-list-check"></i>
+
+            </div>
+
+            <div>
+
+                <span>Step 3</span>
+
+                <h2>Validation</h2>
+
+                <small>Rule 96 Compliance</small>
+
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="icon">
+
+                <i class="fa-solid fa-brain"></i>
+
+            </div>
+
+            <div>
+
+                <span>Step 4</span>
+
+                <h2>AI Review</h2>
+
+                <small>LLM Regulatory Analysis</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= TECHNOLOGY STACK ================= -->
+
+<div class="card fade">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-microchip"></i>
+
+            Technology Stack
+
+        </h2>
+
+    </div>
+
+    <table class="modern-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Component</th>
+
+                <th>Technology Used</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr>
+
+                <td>Frontend</td>
+
+                <td>HTML5, CSS3, JavaScript, Chart.js</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Backend</td>
+
+                <td>Python Flask</td>
+
+            </tr>
+
+            <tr>
+
+                <td>OCR Engine</td>
+
+                <td>Tesseract OCR</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Artificial Intelligence</td>
+
+                <td>Groq API (Llama 3.3 70B)</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Validation Standard</td>
+
+                <td>CDSCO Rule 96</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Database</td>
+
+                <td>SQLite</td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ================= DISCLAIMER ================= -->
+
+<div class="card fade">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            Disclaimer
+
+        </h2>
+
+    </div>
+
+    <p class="text-muted">
+
+        This report has been generated automatically using Optical Character
+        Recognition (OCR), CDSCO Rule 96 validation, and an Artificial
+        Intelligence model. It is intended to assist regulatory review and
+        should be verified by qualified regulatory professionals before
+        making official compliance decisions.
+
+    </p>
+
+</div>

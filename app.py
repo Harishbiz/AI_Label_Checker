@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, send_file, redirect
 from werkzeug.utils import secure_filename
 import os
-import re
 from datetime import datetime
 
 from modules.ocr import extract_text
@@ -22,30 +21,35 @@ from modules.database import (
 
 app = Flask(__name__)
 
-# ---------------- CONFIG ---------------- #
+# ============================================================
+# CONFIGURATION
+# ============================================================
 
 UPLOAD_FOLDER = "uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf"}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Initialize database
 init_db()
 
-
-# ---------------- HELPER FUNCTIONS ---------------- #
+# ============================================================
+# HELPER FUNCTION
+# ============================================================
 
 def allowed_file(filename):
+
     return (
         "." in filename
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
 
-# ---------------- HOME ---------------- #
+# ============================================================
+# HOME PAGE
+# ============================================================
 
 @app.route("/")
 def index():
@@ -62,7 +66,9 @@ def index():
     )
 
 
-# ---------------- UPLOAD ---------------- #
+# ============================================================
+# UPLOAD
+# ============================================================
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -89,7 +95,9 @@ def upload():
 
     try:
 
-        # -------- Handle PDF or Image -------- #
+        # ====================================================
+        # PDF OR IMAGE
+        # ====================================================
 
         if filename.lower().endswith(".pdf"):
 
@@ -101,34 +109,56 @@ def upload():
             ocr_image = filepath
             image_path = "/" + filepath.replace("\\", "/")
 
-        # -------- OCR -------- #
+        # ====================================================
+        # OCR
+        # ====================================================
 
         text = extract_text(ocr_image)
 
-        # -------- Rule Validation -------- #
+        # ====================================================
+        # RULE VALIDATION
+        # ====================================================
 
         results = validate_label(text)
 
-        # -------- AI Analysis -------- #
+        # ====================================================
+        # AI ANALYSIS
+        # ====================================================
 
         ai_report = analyze_label(text)
 
-        # -------- Calculate Compliance Score -------- #
+        # ====================================================
+        # SCORE
+        # ====================================================
 
         passed = sum(results.values())
         total = len(results)
 
-        score = round((passed / total) * 100) if total > 0 else 0
+        score = round(
+            (passed / total) * 100
+        ) if total > 0 else 0
 
-        # -------- Save History -------- #
+        # ====================================================
+        # SAVE HISTORY
+        # ====================================================
 
-        current_date = datetime.now().strftime("%d-%m-%Y %H:%M")
+        current_date = datetime.now().strftime(
+            "%d-%m-%Y %H:%M"
+        )
 
         save_result(
             filename,
             score,
             current_date
         )
+
+        current_time = datetime.now().strftime(
+            "%d %B %Y, %I:%M %p"
+        )
+
+        # ====================================================
+        # RESULT PAGE
+        # ====================================================
 
         return render_template(
             "result.html",
@@ -137,7 +167,10 @@ def upload():
             text=text,
             results=results,
             ai_report=ai_report,
-            score=score
+            score=score,
+            passed=passed,
+            total=total,
+            moment=current_time
         )
 
     except Exception as e:
@@ -146,8 +179,9 @@ def upload():
         <h2>Application Error</h2>
         <pre>{str(e)}</pre>
         """, 500
-
-# ---------------- HISTORY ---------------- #
+        # ============================================================
+# HISTORY
+# ============================================================
 
 @app.route("/history")
 def history():
@@ -155,8 +189,11 @@ def history():
     keyword = request.args.get("search", "").strip()
 
     if keyword:
+
         history = search_history(keyword)
+
     else:
+
         history = get_history()
 
     return render_template(
@@ -166,7 +203,9 @@ def history():
     )
 
 
-# ---------------- DELETE ---------------- #
+# ============================================================
+# DELETE HISTORY
+# ============================================================
 
 @app.route("/delete/<int:record_id>")
 def delete(record_id):
@@ -176,7 +215,9 @@ def delete(record_id):
     return redirect("/history")
 
 
-# ---------------- PDF REPORT ---------------- #
+# ============================================================
+# DOWNLOAD PDF REPORT
+# ============================================================
 
 @app.route("/download_pdf", methods=["POST"])
 def download_pdf():
@@ -193,6 +234,7 @@ def download_pdf():
         if key.startswith("rule_"):
 
             rule = key.replace("rule_", "")
+
             results[rule] = (value == "True")
 
     output_path = os.path.join(
@@ -216,33 +258,40 @@ def download_pdf():
     )
 
 
-# ---------------- ERROR HANDLERS ---------------- #
-
-@app.errorhandler(413)
-def file_too_large(error):
-    return (
-        "<h3>File too large. Maximum upload size is 10 MB.</h3>",
-        413
-    )
-
+# ============================================================
+# ERROR HANDLERS
+# ============================================================
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return (
-        "<h3>404 - Page Not Found</h3>",
-        404
-    )
+
+    return render_template(
+        "404.html"
+    ), 404
+
+
+@app.errorhandler(413)
+def file_too_large(error):
+
+    return render_template(
+        "413.html"
+    ), 413
 
 
 @app.errorhandler(500)
-def internal_error(error):
-    return (
-        "<h3>500 - Internal Server Error</h3>",
-        500
-    )
+def internal_server_error(error):
+
+    return render_template(
+        "500.html"
+    ), 500
 
 
-# ---------------- RUN ---------------- #
+# ============================================================
+# RUN APPLICATION
+# ============================================================
 
 if __name__ == "__main__":
-    app.run(debug=False)
+
+    app.run(
+        debug=False
+    )

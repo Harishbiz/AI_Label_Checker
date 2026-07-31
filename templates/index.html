@@ -1,88 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>AI Pharmaceutical Label Compliance Checker</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LabelAudit AI</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="page">
 
-    <h1>💊 AI Pharmaceutical Label Compliance Checker</h1>
+<!-- ================= NAVBAR ================= -->
 
-    <!-- Dashboard -->
-    <div class="dashboard">
+<nav class="navbar">
 
-        <div class="stat-card">
-            <h3>Total Labels</h3>
-            <h1>{{ stats.total }}</h1>
+    <div class="logo">
+
+        <div class="logo-circle">
+
+            🧪
+
         </div>
 
-        <div class="stat-card">
-            <h3>Average Score</h3>
-            <h1>{{ stats.average }}%</h1>
-        </div>
+        <div>
 
-        <div class="stat-card">
-            <h3>Highest Score</h3>
-            <h1>{{ stats.highest }}%</h1>
-        </div>
+            <h2>LabelAudit AI</h2>
 
-        <div class="stat-card">
-            <h3>Lowest Score</h3>
-            <h1>{{ stats.lowest }}%</h1>
+            <small>
+                Pharmaceutical Regulatory Platform
+            </small>
+
         </div>
 
     </div>
 
-    <!-- Analytics Chart -->
+    <div class="nav-right">
 
-    <div class="chart-card">
+        <a href="/">Dashboard</a>
 
-        <h2>📊 Compliance Analytics</h2>
-
-        <canvas id="scoreChart"></canvas>
+        <a href="/history">History</a>
 
     </div>
 
-    <br>
+</nav>
 
-    <!-- Upload Form -->
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <h1>
+
+        AI-Assisted Pharmaceutical
+        Label Compliance Checker
+
+    </h1>
+
+    <p>
+
+        Validate pharmaceutical labels using
+        OCR, Rule 96 compliance validation,
+        AI analysis and automated PDF reporting.
+
+    </p>
+
+</section>
+
+<!-- ================= KPI CARDS ================= -->
+
+<div class="stats-grid">
+
+    <div class="card stat-card">
+
+        <div class="icon">
+
+            📄
+
+        </div>
+
+        <div>
+
+            <span>Total Reports</span>
+
+            <h2>{{ stats.total }}</h2>
+
+        </div>
+
+    </div>
+
+    <div class="card stat-card">
+
+        <div class="icon">
+
+            📈
+
+        </div>
+
+        <div>
+
+            <span>Average Score</span>
+
+            <h2>{{ stats.average }}%</h2>
+
+        </div>
+
+    </div>
+
+    <div class="card stat-card">
+
+        <div class="icon">
+
+            🏆
+
+        </div>
+
+        <div>
+
+            <span>Highest Score</span>
+
+            <h2>{{ stats.highest }}%</h2>
+
+        </div>
+
+    </div>
+
+    <div class="card stat-card">
+
+        <div class="icon">
+
+            📉
+
+        </div>
+
+        <div>
+
+            <span>Lowest Score</span>
+
+            <h2>{{ stats.lowest }}%</h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= UPLOAD CARD ================= -->
+
+<div class="card upload-card">
+
+    <h2>
+
+        Upload Pharmaceutical Label
+
+    </h2>
+
+    <p>
+
+        Supported Formats :
+        PNG • JPG • JPEG • PDF
+
+    </p>
 
     <form action="/upload"
           method="POST"
           enctype="multipart/form-data">
 
-        <label><b>Select Pharmaceutical Label</b></label>
+        <div class="drop-zone">
 
-        <br><br>
+            <input
+                type="file"
+                name="label"
+                required>
 
-        <input
-            type="file"
-            name="label"
-            required>
+        </div>
 
-        <br><br>
+        <div class="input-group">
 
-        <label><b>Select AI Model</b></label>
+            <label>
 
-        <br><br>
+                AI Model
 
-        <select name="ai">
+            </label>
 
-            <option value="groq">
-                Groq AI (Llama 3.3)
-            </option>
+            <select name="ai">
 
-        </select>
+                <option value="groq">
 
-        <br><br>
+                    Groq Llama 3.3 70B
 
-        <button type="submit">
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            class="primary-btn"
+            type="submit">
 
             🔍 Analyze Label
 
@@ -90,92 +224,306 @@
 
     </form>
 
-    <hr>
+</div>
+<!-- ================= ANALYTICS ================= -->
 
-    <h2>📄 Recent Analysis</h2>
+<div class="analytics-grid">
 
-    <table class="history-table">
+    <div class="card">
 
-        <tr>
+        <div class="card-header">
 
-            <th>Filename</th>
-            <th>Score</th>
-            <th>Date</th>
+            <h2>Compliance Analytics</h2>
 
-        </tr>
+            <span class="badge">Overview</span>
 
-        {% for row in history %}
+        </div>
 
-        <tr>
+        <canvas id="scoreChart"></canvas>
 
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}%</td>
-            <td>{{ row[3] }}</td>
+    </div>
 
-        </tr>
+    <div class="card">
 
-        {% endfor %}
+        <div class="card-header">
 
-    </table>
+            <h2>Compliance Categories</h2>
 
-    <br>
+        </div>
 
-    <div style="text-align:center;">
+        <div class="legend">
 
-        <a href="/history">
+            <div class="legend-item">
 
-            <button>
+                <span class="dot excellent"></span>
 
-                📚 View Full History
+                <span>Excellent (90–100%)</span>
 
-            </button>
+                <strong>{{ chart.excellent }}</strong>
 
-        </a>
+            </div>
+
+            <div class="legend-item">
+
+                <span class="dot good"></span>
+
+                <span>Good (75–89%)</span>
+
+                <strong>{{ chart.good }}</strong>
+
+            </div>
+
+            <div class="legend-item">
+
+                <span class="dot average"></span>
+
+                <span>Average (50–74%)</span>
+
+                <strong>{{ chart.average }}</strong>
+
+            </div>
+
+            <div class="legend-item">
+
+                <span class="dot poor"></span>
+
+                <span>Poor (&lt;50%)</span>
+
+                <strong>{{ chart.poor }}</strong>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- ================= RECENT REPORTS ================= -->
+
+<div class="card history-card">
+
+    <div class="card-header">
+
+        <h2>Recent Analysis</h2>
+
+        <a href="/history"
+           class="view-all">
+
+            View All →
+
+        </a>
+
+    </div>
+
+    <table class="modern-table">
+
+        <thead>
+
+        <tr>
+
+            <th>Filename</th>
+
+            <th>Compliance</th>
+
+            <th>Date</th>
+
+            <th>Status</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for row in history %}
+
+        <tr>
+
+            <td>
+
+                📄 {{ row[1] }}
+
+            </td>
+
+            <td>
+
+                <strong>{{ row[2] }}%</strong>
+
+            </td>
+
+            <td>
+
+                {{ row[3] }}
+
+            </td>
+
+            <td>
+
+                {% if row[2] >= 90 %}
+
+                    <span class="status excellent">
+
+                        Excellent
+
+                    </span>
+
+                {% elif row[2] >= 75 %}
+
+                    <span class="status good">
+
+                        Good
+
+                    </span>
+
+                {% elif row[2] >= 50 %}
+
+                    <span class="status average">
+
+                        Average
+
+                    </span>
+
+                {% else %}
+
+                    <span class="status poor">
+
+                        Poor
+
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-content">
+
+        <div>
+
+            <h3>LabelAudit AI</h3>
+
+            <p>
+
+                AI-Assisted Pharmaceutical Label Compliance Platform
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <small>
+
+                Built using Flask • OCR • Rule 96 • Groq AI • SQLite
+
+            </small>
+
+        </div>
+
+    </div>
+
+</footer>
+
+</div>
 
 <script>
 
 const ctx = document.getElementById("scoreChart");
 
-new Chart(ctx,{
+new Chart(ctx, {
 
-    type:"doughnut",
+    type: "doughnut",
 
-    data:{
+    data: {
 
-        labels:[
+        labels: [
+
             "Excellent",
+
             "Good",
+
             "Average",
+
             "Poor"
+
         ],
 
-        datasets:[{
+        datasets: [{
 
-            data:[
+            data: [
+
                 {{ chart.excellent }},
+
                 {{ chart.good }},
+
                 {{ chart.average }},
+
                 {{ chart.poor }}
-            ]
+
+            ],
+
+            backgroundColor: [
+
+                "#22C55E",
+
+                "#3B82F6",
+
+                "#F59E0B",
+
+                "#EF4444"
+
+            ],
+
+            borderWidth: 0,
+
+            hoverOffset: 8
 
         }]
 
     },
 
-    options:{
+    options: {
 
-        responsive:true,
+        responsive: true,
 
-        plugins:{
+        maintainAspectRatio: false,
 
-            legend:{
-                position:"bottom"
+        plugins: {
+
+            legend: {
+
+                position: "bottom",
+
+                labels: {
+
+                    usePointStyle: true,
+
+                    padding: 20,
+
+                    font: {
+
+                        family: "Inter",
+
+                        size: 13
+
+                    }
+
+                }
+
             }
 
         }
@@ -187,4 +535,5 @@ new Chart(ctx,{
 </script>
 
 </body>
+
 </html>

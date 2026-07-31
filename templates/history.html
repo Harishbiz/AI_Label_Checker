@@ -1,67 +1,465 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Analysis History</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Analysis History | LabelAudit AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="page fade">
 
-    <h1>📚 Analysis History</h1>
+<!-- ================= NAVBAR ================= -->
 
-    <form method="GET" action="/history" style="margin-bottom:20px;">
+<nav class="navbar">
 
-        <input
-            type="text"
-            name="search"
-            placeholder="Search by filename..."
-            value="{{ keyword }}"
-            style="padding:10px; width:300px; border-radius:6px;">
+<div class="logo">
 
-        <button type="submit">
-            🔍 Search
-        </button>
+<div class="logo-circle">
 
-        <a href="/history">
-            <button type="button">
-                Reset
+<i class="fa-solid fa-flask"></i>
+
+</div>
+
+<div>
+
+<h2>
+
+LabelAudit AI
+
+</h2>
+
+<small>
+
+AI Pharmaceutical Label Compliance Platform
+
+</small>
+
+</div>
+
+</div>
+
+<div class="nav-right">
+
+<a href="/">
+
+Dashboard
+
+</a>
+
+<a href="/history">
+
+History
+
+</a>
+
+</div>
+
+</nav>
+
+<!-- ================= HEADER ================= -->
+
+<section class="hero">
+
+<h1>
+
+Compliance Analysis History
+
+</h1>
+
+<p>
+
+Review all previously analysed pharmaceutical labels,
+their compliance scores and analysis dates.
+
+</p>
+
+</section>
+
+<!-- ================= SEARCH ================= -->
+
+<div class="card">
+
+<div class="card-header">
+
+<h2>
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+Search History
+
+</h2>
+
+</div>
+
+<form
+action="/history"
+method="GET"
+style="display:flex;gap:15px;">
+
+<input
+type="text"
+name="search"
+placeholder="Search filename..."
+value="{{ keyword }}">
+
+<button
+class="primary-btn"
+type="submit">
+
+<i class="fa-solid fa-search"></i>
+
+Search
+
+</button>
+
+<a href="/history">
+
+<button
+type="button"
+class="secondary-btn">
+
+Reset
+
+</button>
+
+</a>
+
+</form>
+
+</div>
+
+<!-- ================= HISTORY TABLE ================= -->
+
+<div class="card">
+
+<div class="card-header">
+
+<div>
+
+<h2>
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+Analysis Records
+
+</h2>
+
+<p class="text-muted">
+
+Previously analysed pharmaceutical labels
+
+</p>
+
+</div>
+
+<span class="badge">
+
+{{ history|length }}
+
+Records
+
+</span>
+
+</div>
+
+<table class="modern-table">
+
+<thead>
+
+<tr>
+
+<th>
+
+#
+
+</th>
+
+<th>
+
+File Name
+
+</th>
+
+<th>
+
+Compliance Score
+
+</th>
+
+<th>
+
+Date
+
+</th>
+
+<th>
+
+Action
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% if history %}
+
+{% for row in history %}
+<tr>
+
+    <td>
+
+        {{ loop.index }}
+
+    </td>
+
+    <td>
+
+        <i class="fa-solid fa-file-medical"
+           style="color:#2563EB;"></i>
+
+        {{ row[1] }}
+
+    </td>
+
+    <td>
+
+        {% if row[2] >= 90 %}
+
+            <span class="status excellent">
+
+                {{ row[2] }}%
+
+            </span>
+
+        {% elif row[2] >= 75 %}
+
+            <span class="status good">
+
+                {{ row[2] }}%
+
+            </span>
+
+        {% elif row[2] >= 50 %}
+
+            <span class="status average">
+
+                {{ row[2] }}%
+
+            </span>
+
+        {% else %}
+
+            <span class="status poor">
+
+                {{ row[2] }}%
+
+            </span>
+
+        {% endif %}
+
+    </td>
+
+    <td>
+
+        {{ row[3] }}
+
+    </td>
+
+    <td>
+
+        <a href="/delete/{{ row[0] }}"
+           onclick="return confirm('Delete this analysis record?')">
+
+            <button class="secondary-btn">
+
+                <i class="fa-solid fa-trash"></i>
+
+                Delete
+
             </button>
+
         </a>
 
-    </form>
+    </td>
 
-    <table class="history-table">
+</tr>
 
-        <tr>
-            <th>Filename</th>
-            <th>Score</th>
-            <th>Date & Time</th>
-        </tr>
+{% endfor %}
 
-        {% for row in history %}
-        <tr>
-            <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}%</td>
-            <td>{{ row[2] }}</td>
-        </tr>
-        {% endfor %}
+{% else %}
 
-    </table>
+<tr>
 
-    <br>
+<td colspan="5">
 
-    <div style="text-align:center;">
-        <a href="/">
-            <button type="button">
-                ⬅ Back to Dashboard
-            </button>
-        </a>
-    </div>
+<div style="padding:50px;text-align:center;">
+
+<i class="fa-solid fa-folder-open"
+
+style="font-size:55px;color:#CBD5E1;"></i>
+
+<h3>
+
+No Analysis History Found
+
+</h3>
+
+<p class="text-muted">
+
+Upload a pharmaceutical label to create your first compliance report.
+
+</p>
+
+<a href="/">
+
+<button class="primary-btn">
+
+<i class="fa-solid fa-upload"></i>
+
+Upload Label
+
+</button>
+
+</a>
+
+</div>
+
+</td>
+
+</tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<!-- ================= QUICK INFORMATION ================= -->
+
+<div class="summary-grid">
+
+<div class="card">
+
+<i class="fa-solid fa-database fa-2x"
+style="color:#2563EB;"></i>
+
+<h3>Total Records</h3>
+
+<h1>
+
+{{ history|length }}
+
+</h1>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-file-shield fa-2x"
+style="color:#10B981;"></i>
+
+<h3>Validation</h3>
+
+<p>
+
+CDSCO Rule 96
+
+</p>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-robot fa-2x"
+style="color:#F59E0B;"></i>
+
+<h3>AI Engine</h3>
+
+<p>
+
+Groq Llama 3.3
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+<div class="footer-content">
+
+<div>
+
+<h3>
+
+LabelAudit AI
+
+</h3>
+
+<p>
+
+AI-Assisted Pharmaceutical Label Compliance Checker
+
+</p>
+
+</div>
+
+<div>
+
+<small>
+
+The Oxford College of Pharmacy
+
+</small>
+
+<br>
+
+<small>
+
+Bachelor of Pharmacy Final Year Project
+
+</small>
+
+</div>
+
+</div>
+
+</footer>
 
 </div>
 
 </body>
+
 </html>

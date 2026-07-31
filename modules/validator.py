@@ -2,8 +2,12 @@ import json
 
 def validate_label(text):
 
-    with open("rules/rule96.json", "r") as file:
-        rules = json.load(file)
+    try:
+        with open("rules/rule96.json", "r", encoding="utf-8") as file:
+            rules = json.load(file)
+
+    except Exception as e:
+        return {"Rule File Error": str(e)}
 
     results = {}
 
@@ -11,13 +15,10 @@ def validate_label(text):
 
     for field in rules["mandatory_fields"]:
 
-        found = False
-
-        for keyword in field["keywords"]:
-
-            if keyword.lower() in lower:
-                found = True
-                break
+        found = any(
+            keyword.lower() in lower
+            for keyword in field["keywords"]
+        )
 
         results[field["name"]] = found
 
