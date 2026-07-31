@@ -1176,3 +1176,44 @@
     </p>
 
 </div>
+<!-- ================= DOWNLOAD PDF ================= -->
+
+<div class="card">
+
+    <div class="card-header">
+
+        <h2>
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            Export Report
+
+        </h2>
+
+    </div>
+
+    <form action="/download_pdf" method="POST">
+
+        <input type="hidden" name="filename" value="{{ filename }}">
+        <input type="hidden" name="score" value="{{ score }}">
+        <input type="hidden" name="text" value="{{ text }}">
+        <input type="hidden" name="ai_report" value="{{ ai_report }}">
+
+        {% for rule, status in results.items() %}
+            <input
+                type="hidden"
+                name="rule_{{ rule }}"
+                value="{{ status }}">
+        {% endfor %}
+
+        <button type="submit" class="primary-btn">
+
+            <i class="fa-solid fa-download"></i>
+
+            Download Compliance Report (PDF)
+
+        </button>
+
+    </form>
+
+</div>
